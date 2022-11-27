@@ -1,2 +1,1 @@
-# BiomeManagerWiki
-Empty repository for BiomeManager and extra information
+This is an intentionally empty repository that holds the [wiki](https://github.com/CJCrafter/BiomeManagerWiki/wiki) for [BiomeManager](https://www.spigotmc.org/resources/106419/).
