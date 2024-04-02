@@ -24,15 +24,23 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R3.CraftParticle;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+
+import java.lang.reflect.Field;
 
 public class v1_20_R3 implements BiomeCompatibility {
 
+    private static final Field chunkBiomesField;
+
+    static {
+        chunkBiomesField = ReflectionUtil.getField(ClientboundLevelChunkPacketData.class, byte[].class);
+    }
+
+    private Registry<Biome> biomes;
+
     public v1_20_R3() {
-        Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
+        biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
         for (Biome biome : biomes) {
 
             ResourceLocation nmsKey = biomes.getKey(biome);
@@ -90,8 +98,6 @@ public class v1_20_R3 implements BiomeCompatibility {
         ClientboundLevelChunkWithLightPacket packet = (ClientboundLevelChunkWithLightPacket) event.getPacket().getHandle();
         ClientboundLevelChunkPacketData chunkData = packet.getChunkData();
 
-        Registry<Biome> registry = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
-
         // 4 comes from 16 / 4 (<- and that 4 is the width of each biome section)
         int ySections = ((CraftWorld) event.getPlayer().getWorld()).getHandle().getSectionsCount();
         BiomeWrapper[] biomes = new BiomeWrapper[4 * 4 * 4 * ySections];
@@ -100,13 +106,13 @@ public class v1_20_R3 implements BiomeCompatibility {
         int counter = 0;
         FriendlyByteBuf sectionBuffer = chunkData.getReadBuffer();
         for (int i = 0; i < ySections; i++) {
-            sections[i] = new LevelChunkSection(registry);
+            sections[i] = new LevelChunkSection(this.biomes);
             sections[i].read(sectionBuffer);
 
             for (int x = 0; x < 4; x++) {
                 for (int y = 0; y < 4; y++) {
                     for (int z = 0; z < 4; z++) {
-                        ResourceLocation key = registry.getKey(sections[i].getNoiseBiome(x, y, z).value());
+                        ResourceLocation key = this.biomes.getKey(sections[i].getNoiseBiome(x, y, z).value());
                         NamespacedKey namespace = new NamespacedKey(key.getNamespace(), key.getPath());
                         biomes[counter++] = BiomeRegistry.getInstance().get(namespace);
                     }
@@ -129,7 +135,7 @@ public class v1_20_R3 implements BiomeCompatibility {
                             continue;
                         NamespacedKey namespace = wrapper.getKey();
                         ResourceLocation location = new ResourceLocation(namespace.getNamespace(), namespace.getKey());
-                        section.setBiome(x, y, z, Holder.direct(registry.get(location)));
+                        section.setBiome(x, y, z, Holder.direct(this.biomes.get(location)));
                     }
                 }
             }
@@ -145,6 +151,6 @@ public class v1_20_R3 implements BiomeCompatibility {
             section.write(friendlyByteBuf);
         }
 
-        ReflectionUtil.setField(ReflectionUtil.getField(chunkData.getClass(), byte[].class), chunkData, bytes);
+        ReflectionUtil.setField(chunkBiomesField, chunkData, bytes);
     }
 }
