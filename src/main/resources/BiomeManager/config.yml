@@ -1,0 +1,6 @@
+Debug_Level: 2
+
+# If you do not want to use /bm variations, then setting this to true may
+# help with performance. This will disable the biome variations for all worlds,
+# and will also disable any other plugin that tries to modify biomes via our API.
+Disable_Biome_Variations: false
