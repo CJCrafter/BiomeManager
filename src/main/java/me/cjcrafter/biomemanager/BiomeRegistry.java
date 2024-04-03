@@ -1,5 +1,6 @@
 package me.cjcrafter.biomemanager;
 
+import com.comphenix.protocol.collections.IntegerMap;
 import me.cjcrafter.biomemanager.compatibility.BiomeCompatibilityAPI;
 import me.cjcrafter.biomemanager.compatibility.BiomeWrapper;
 import org.bukkit.NamespacedKey;
@@ -19,10 +20,12 @@ public final class BiomeRegistry {
 
 
     private final Map<NamespacedKey, BiomeWrapper> map;
+    private final IntegerMap<BiomeWrapper> byId;
     private final Set<NamespacedKey> removedBiomes;
 
     public BiomeRegistry() {
         map = new LinkedHashMap<>();
+        byId = new IntegerMap<>();
         removedBiomes = new HashSet<>();
     }
 
@@ -37,6 +40,7 @@ public final class BiomeRegistry {
             throw new IllegalArgumentException("Tries to add deleted biome '" + key + "' without restarting the server");
 
         map.put(key, biome);
+        byId.put(biome.getId().orElseThrow(), biome);
     }
 
     public BiomeWrapper remove(NamespacedKey key) {
@@ -48,6 +52,10 @@ public final class BiomeRegistry {
 
     public BiomeWrapper get(NamespacedKey key) {
         return map.get(key);
+    }
+
+    public BiomeWrapper getById(int id) {
+        return byId.get(id);
     }
 
     public BiomeWrapper getBukkit(Biome biome) {

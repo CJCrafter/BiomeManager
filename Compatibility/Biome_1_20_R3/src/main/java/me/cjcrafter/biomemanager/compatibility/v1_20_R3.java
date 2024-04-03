@@ -60,7 +60,6 @@ public class v1_20_R3 implements BiomeCompatibility {
     }
 
     private Biome getBiome(NamespacedKey key) {
-        Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
         return biomes.get(new ResourceLocation(key.getNamespace(), key.getKey()));
     }
 
@@ -81,8 +80,7 @@ public class v1_20_R3 implements BiomeCompatibility {
 
         // Get the namespaced key from the biome
         Biome biome = world.getBiome(pos).value();
-        Registry<Biome> registry = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
-        ResourceKey<Biome> location = registry.getResourceKey(biome).orElseThrow();
+        ResourceKey<Biome> location = biomes.getResourceKey(biome).orElseThrow();
         NamespacedKey key = new NamespacedKey(location.location().getNamespace(), location.location().getPath());
 
         // If there is no wrapper setup for the given key, create a new one.
@@ -112,9 +110,9 @@ public class v1_20_R3 implements BiomeCompatibility {
             for (int x = 0; x < 4; x++) {
                 for (int y = 0; y < 4; y++) {
                     for (int z = 0; z < 4; z++) {
-                        ResourceLocation key = this.biomes.getKey(sections[i].getNoiseBiome(x, y, z).value());
-                        NamespacedKey namespace = new NamespacedKey(key.getNamespace(), key.getPath());
-                        biomes[counter++] = BiomeRegistry.getInstance().get(namespace);
+                        Biome nmsBiome = sections[i].getNoiseBiome(x, y, z).value();
+                        int id = this.biomes.getId(nmsBiome);
+                        biomes[counter++] = BiomeRegistry.getInstance().getById(id);
                     }
                 }
             }
@@ -133,9 +131,9 @@ public class v1_20_R3 implements BiomeCompatibility {
                         // Seems to occur during generation?
                         if (wrapper == null)
                             continue;
-                        NamespacedKey namespace = wrapper.getKey();
-                        ResourceLocation location = new ResourceLocation(namespace.getNamespace(), namespace.getKey());
-                        section.setBiome(x, y, z, Holder.direct(this.biomes.get(location)));
+
+                        int id = wrapper.getId().orElseThrow(() -> new IllegalStateException("Tried to use a biome that was not registered!"));
+                        section.setBiome(x, y, z, Holder.direct(this.biomes.byId(id)));
                     }
                 }
             }

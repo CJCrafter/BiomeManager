@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
 
 group = "me.cjcrafter"
-version = "3.6.9"
+version = "3.7.0"
 
 plugins {
     `java-library`
