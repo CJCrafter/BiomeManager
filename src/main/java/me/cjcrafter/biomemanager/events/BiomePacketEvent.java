@@ -31,13 +31,20 @@ public class BiomePacketEvent extends Event {
     private final PacketEvent event;
     private final BiomeWrapper[] biomes;
 
-    private final int chunkX;
-    private final int chunkZ;
+    private boolean isChunkCache = false;
+    private int chunkX;
+    private int chunkZ;
 
     public BiomePacketEvent(PacketEvent event, BiomeWrapper[] biomes) {
         this.event = event;
         this.biomes = biomes;
+    }
 
+    private void setChunkCache() {
+        if (isChunkCache)
+            return;
+
+        isChunkCache = true;
         chunkX = event.getPacket().getIntegers().read(0);
         chunkZ = event.getPacket().getIntegers().read(1);
     }
@@ -87,6 +94,7 @@ public class BiomePacketEvent extends Event {
      * @see #getChunk()
      */
     public int getChunkX() {
+        setChunkCache();
         return chunkX;
     }
 
@@ -98,6 +106,7 @@ public class BiomePacketEvent extends Event {
      * @see #getChunk()
      */
     public int getChunkZ() {
+        setChunkCache();
         return chunkZ;
     }
 
@@ -107,6 +116,7 @@ public class BiomePacketEvent extends Event {
      * @return The x block coordinate.
      */
     public int getBlockX() {
+        setChunkCache();
         return chunkX << 4;
     }
 
@@ -116,6 +126,7 @@ public class BiomePacketEvent extends Event {
      * @return The z block coordinate.
      */
     public int getBlockZ() {
+        setChunkCache();
         return chunkZ << 4;
     }
 
@@ -125,6 +136,7 @@ public class BiomePacketEvent extends Event {
      * @return The chunk involved.
      */
     public Chunk getChunk() {
+        setChunkCache();
         return getWorld().getChunkAt(chunkX,  chunkZ);
     }
 
