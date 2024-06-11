@@ -11,6 +11,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.OptionalInt;
+
 public interface BiomeWrapper {
 
     /**
@@ -40,6 +42,16 @@ public interface BiomeWrapper {
      * @return The non-null key storing the name of the biome.
      */
     NamespacedKey getKey();
+
+    /**
+     * Returns the unique numerical ID for this biome, as set by the server.
+     * This value is not guaranteed to be the same across server restarts.
+     *
+     * @return The unique numerical ID for this biome.
+     */
+    default OptionalInt getId() {
+        return OptionalInt.empty();
+    }
 
     /**
      * Returns the name of this biome. Biome names <i>may</i> not be unique.

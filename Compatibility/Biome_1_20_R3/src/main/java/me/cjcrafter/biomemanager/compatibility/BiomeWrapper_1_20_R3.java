@@ -28,9 +28,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.OptionalInt;
 
 import static me.deecaad.core.utils.ReflectionUtil.*;
 
@@ -55,6 +57,7 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
     }
 
     private final NamespacedKey key;
+    private OptionalInt id;
     private Biome base;
     private Biome biome;
     private boolean isVanilla;
@@ -65,6 +68,7 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
         Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
 
         this.key = NamespacedKey.fromString(biomes.getKey(biome).toString());
+        this.id = OptionalInt.of(biomes.getId(biome));
         this.base = biome;
 
         // Swap so reset() will work in the future (keep a copy of original biome).
@@ -82,6 +86,7 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
         Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
 
         this.key = key;
+        this.id = OptionalInt.empty();
         this.base = biomes.get(new ResourceLocation(base.getKey().getNamespace(), base.getKey().getKey()));
         reset();
 
@@ -157,6 +162,11 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
     @Override
     public NamespacedKey getKey() {
         return key;
+    }
+
+    @Override
+    public OptionalInt getId() {
+        return id;
     }
 
     @Override
@@ -282,7 +292,6 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
             throw new InternalError(biomes + " was not a writable registry???");
 
         // Register the biome to BiomeManager's registry, and to the vanilla registry
-        BiomeRegistry.getInstance().add(key, this);
         if (isCustom) {
             Field freezeField = ReflectionUtil.getField(MappedRegistry.class, boolean.class);
             ReflectionUtil.setField(freezeField, biomes, false);
@@ -295,7 +304,12 @@ public class BiomeWrapper_1_20_R3 implements BiomeWrapper {
 
             ReflectionUtil.setField(intrusiveHoldersField, biomes, null);
             ReflectionUtil.setField(freezeField, biomes, true);
+
+            // Now get and save the numerical id of our newly registered biome
+            id = OptionalInt.of(biomes.getId(biome));
         }
+
+        BiomeRegistry.getInstance().add(key, this);
     }
 
     @Override

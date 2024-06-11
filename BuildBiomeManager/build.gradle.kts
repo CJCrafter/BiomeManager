@@ -1,8 +1,7 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
 
 group = "me.cjcrafter"
-version = "3.6.9"
+version = "3.7.0"
 
 plugins {
     `java-library`
@@ -61,14 +60,7 @@ dependencies {
     implementation(project(":Biome_1_20_R3", "reobf"))
 }
 
-tasks {
-    compileJava {
-        options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
-        options.release.set(17) // We need to set release compatibility to java 17 since MC 18+ uses it
-    }
-}
-
-tasks.named<ShadowJar>("shadowJar") {
+tasks.shadowJar {
     destinationDirectory.set(file("../build"))
     archiveFileName.set("BiomeManager-${project.version}.jar")
 
