@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("com.cjcrafter:mechanicscore:3.3.0")
+    compileOnly("com.cjcrafter:mechanicscore:3.4.1")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.13")
 
     // adventure
