@@ -37,10 +37,10 @@ public final class BiomeRegistry {
         if (map.containsKey(key))
             throw new IllegalArgumentException("Duplicate key '" + key + "'");
         if (removedBiomes.contains(key))
-            throw new IllegalArgumentException("Tries to add deleted biome '" + key + "' without restarting the server");
+            throw new IllegalArgumentException("Tried to add deleted biome '" + key + "' without restarting the server");
 
         map.put(key, biome);
-        byId.put(biome.getId().orElseThrow(), biome);
+        byId.put(biome.getId(), biome);
     }
 
     public BiomeWrapper remove(NamespacedKey key) {

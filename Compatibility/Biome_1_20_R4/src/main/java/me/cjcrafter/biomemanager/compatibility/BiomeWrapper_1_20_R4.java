@@ -11,6 +11,7 @@ import me.deecaad.core.utils.LogLevel;
 import me.deecaad.core.utils.ReflectionUtil;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.*;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,22 +22,21 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.OptionalInt;
 
 import static me.deecaad.core.utils.ReflectionUtil.*;
 
-public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
+public class BiomeWrapper_1_20_R4 implements BiomeWrapper {
 
     private static final Field climateSettingsField;
     private static final Field temperatureAdjustmentField;
@@ -63,7 +63,7 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
     private boolean isExternalPlugin;
     private boolean isDirty; // true for custom and modified vanilla biomes
 
-    public BiomeWrapper_1_20_R1(Biome biome) {
+    public BiomeWrapper_1_20_R4(Biome biome) {
         Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
 
         this.key = NamespacedKey.fromString(biomes.getKey(biome).toString());
@@ -80,7 +80,7 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
         isExternalPlugin = !key.getKey().equals(NamespacedKey.MINECRAFT);
     }
 
-    public BiomeWrapper_1_20_R1(NamespacedKey key, BiomeWrapper_1_20_R1 base) {
+    public BiomeWrapper_1_20_R4(NamespacedKey key, BiomeWrapper_1_20_R4 base) {
         Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
 
         this.key = key;
@@ -167,6 +167,13 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
         return biomes.getId(biome);
     }
 
+    public String writeParticle(ParticleOptions particle) {
+        if (particle instanceof DustParticleOptions dust) {
+            
+        }
+        return "";
+    }
+
     @Override
     public SpecialEffectsBuilder getSpecialEffects() {
         BiomeSpecialEffects effects = biome.getSpecialEffects();
@@ -183,7 +190,8 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
 
         if (effects.getAmbientParticleSettings().isPresent()) {
             AmbientParticleSettings particle = effects.getAmbientParticleSettings().get();
-            builder.setAmbientParticle(particle.getOptions().writeToString())
+
+            builder.setAmbientParticle(writeParticle(particle.getOptions()))
                     .setParticleProbability((float) ReflectionUtil.invokeField(particleDensityField, particle));
         }
 
@@ -243,7 +251,7 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
         if (particle.particle() != null) {
             try {
                 RegistryAccess access = ((CraftServer) Bukkit.getServer()).getServer().registryAccess();
-                ParticleOptions nmsParticle = ParticleArgument.readParticle(new StringReader(particle.particle()), access.lookupOrThrow(Registries.PARTICLE_TYPE));
+                ParticleOptions nmsParticle = ParticleArgument.readParticle(new StringReader(particle.particle()), access);
                 a.ambientParticle(new AmbientParticleSettings(nmsParticle, particle.density()));
             } catch (CommandSyntaxException ex) {
                 BiomeManager.inst().debug.log(LogLevel.ERROR, "Could not set particle: " + particle, ex);
@@ -298,7 +306,7 @@ public class BiomeWrapper_1_20_R1 implements BiomeWrapper {
             ReflectionUtil.setField(intrusiveHoldersField, biomes, new HashMap<>());
 
             writable.createIntrusiveHolder(biome);
-            writable.register(resource, biome, Lifecycle.stable());
+            writable.register(resource, biome, RegistrationInfo.BUILT_IN);
 
             ReflectionUtil.setField(intrusiveHoldersField, biomes, null);
             ReflectionUtil.setField(freezeField, biomes, true);

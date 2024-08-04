@@ -1,7 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
 
 group = "me.cjcrafter"
-version = "3.7.1"
+version = "3.7.3"
 
 plugins {
     `java-library`

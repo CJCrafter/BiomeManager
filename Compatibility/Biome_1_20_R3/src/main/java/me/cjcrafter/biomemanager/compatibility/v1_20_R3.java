@@ -132,7 +132,7 @@ public class v1_20_R3 implements BiomeCompatibility {
                         if (wrapper == null)
                             continue;
 
-                        int id = wrapper.getId().orElseThrow(() -> new IllegalStateException("Tried to use a biome that was not registered!"));
+                        int id = wrapper.getId();
                         section.setBiome(x, y, z, Holder.direct(this.biomes.byId(id)));
                     }
                 }

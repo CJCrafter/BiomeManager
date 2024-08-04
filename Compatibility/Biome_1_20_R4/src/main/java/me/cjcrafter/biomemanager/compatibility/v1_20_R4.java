@@ -29,7 +29,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 
 import java.lang.reflect.Field;
 
-public class v1_21_R1 implements BiomeCompatibility {
+public class v1_20_R4 implements BiomeCompatibility {
 
     private static final Field chunkBiomesField;
 
@@ -39,7 +39,7 @@ public class v1_21_R1 implements BiomeCompatibility {
 
     private Registry<Biome> biomes;
 
-    public v1_21_R1() {
+    public v1_20_R4() {
         biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
         for (Biome biome : biomes) {
 
@@ -51,7 +51,7 @@ public class v1_21_R1 implements BiomeCompatibility {
 
             try {
                 NamespacedKey key = new NamespacedKey(nmsKey.getNamespace(), nmsKey.getPath());
-                BiomeRegistry.getInstance().add(key, new BiomeWrapper_1_21_R1(biome));
+                BiomeRegistry.getInstance().add(key, new BiomeWrapper_1_20_R4(biome));
             } catch (Throwable ex) {
                 BiomeManager.inst().debug.error("Failed to load biome: " + nmsKey);
                 BiomeManager.inst().debug.log(LogLevel.ERROR, ex.getMessage(), ex);
@@ -60,12 +60,12 @@ public class v1_21_R1 implements BiomeCompatibility {
     }
 
     private Biome getBiome(NamespacedKey key) {
-        return biomes.get(ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getKey()));
+        return biomes.get(new ResourceLocation(key.getNamespace(), key.getKey()));
     }
 
     @Override
     public BiomeWrapper createBiome(NamespacedKey key, BiomeWrapper base) {
-        return new BiomeWrapper_1_21_R1(key, (BiomeWrapper_1_21_R1) base);
+        return new BiomeWrapper_1_20_R4(key, (BiomeWrapper_1_20_R4) base);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class v1_21_R1 implements BiomeCompatibility {
         // If there is no wrapper setup for the given key, create a new one.
         BiomeWrapper wrapper = BiomeRegistry.getInstance().get(key);
         if (wrapper == null)
-            wrapper = new BiomeWrapper_1_21_R1(getBiome(key));
+            wrapper = new BiomeWrapper_1_20_R4(getBiome(key));
 
         return wrapper;
     }

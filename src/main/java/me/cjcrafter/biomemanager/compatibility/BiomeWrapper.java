@@ -49,9 +49,7 @@ public interface BiomeWrapper {
      *
      * @return The unique numerical ID for this biome.
      */
-    default OptionalInt getId() {
-        return OptionalInt.empty();
-    }
+    int getId();
 
     /**
      * Returns the name of this biome. Biome names <i>may</i> not be unique.

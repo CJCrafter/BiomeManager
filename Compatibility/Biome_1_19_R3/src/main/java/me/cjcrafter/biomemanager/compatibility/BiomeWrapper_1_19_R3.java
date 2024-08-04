@@ -161,6 +161,12 @@ public class BiomeWrapper_1_19_R3 implements BiomeWrapper {
     }
 
     @Override
+    public int getId() {
+        Registry<Biome> biomes = MinecraftServer.getServer().registryAccess().registry(Registries.BIOME).orElseThrow();
+        return biomes.getId(biome);
+    }
+
+    @Override
     public SpecialEffectsBuilder getSpecialEffects() {
         BiomeSpecialEffects effects = biome.getSpecialEffects();
         SpecialEffectsBuilder builder = new SpecialEffectsBuilder();
@@ -283,7 +289,6 @@ public class BiomeWrapper_1_19_R3 implements BiomeWrapper {
             throw new InternalError(biomes + " was not a writable registry???");
 
         // Register the biome to BiomeManager's registry, and to the vanilla registry
-        BiomeRegistry.getInstance().add(key, this);
         if (isCustom) {
             Field freezeField = ReflectionUtil.getField(MappedRegistry.class, boolean.class);
             ReflectionUtil.setField(freezeField, biomes, false);
@@ -297,6 +302,7 @@ public class BiomeWrapper_1_19_R3 implements BiomeWrapper {
             ReflectionUtil.setField(intrusiveHoldersField, biomes, null);
             ReflectionUtil.setField(freezeField, biomes, true);
         }
+        BiomeRegistry.getInstance().add(key, this);
     }
 
     @Override
