@@ -58,6 +58,9 @@ tasks.shadowJar {
         relocate("org.bstats", "me.cjcrafter.biomemanager.lib.bstats") {
             include(dependency("org.bstats:"))
         }
+        relocate("com.cjcrafter.scheduler", "com.cjcrafter.biomemanager.lib.scheduler") {
+            include(dependency("com.cjcrafter:foliascheduler:"))
+        }
     }
 
     // This doesn't actually include any dependencies, this relocates all references

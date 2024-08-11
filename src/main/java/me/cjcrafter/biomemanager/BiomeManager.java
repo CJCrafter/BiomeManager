@@ -1,5 +1,7 @@
 package me.cjcrafter.biomemanager;
 
+import com.cjcrafter.scheduler.FoliaCompatibility;
+import com.cjcrafter.scheduler.ServerImplementation;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -42,9 +44,12 @@ public class BiomeManager extends JavaPlugin {
     public EditModeListener editModeListener;
     public BiomeRandomizer biomeRandomizer;
 
+    private ServerImplementation scheduler;
+
     public void onLoad() {
         INSTANCE = this;
         debug = new Debugger(getLogger(), 2);
+        scheduler = new FoliaCompatibility(this).getServerImplementation();
     }
 
     @Override
@@ -168,6 +173,10 @@ public class BiomeManager extends JavaPlugin {
 
     public Debugger getDebug() {
         return debug;
+    }
+
+    public ServerImplementation getScheduler() {
+        return scheduler;
     }
 
     public static BiomeManager inst() {

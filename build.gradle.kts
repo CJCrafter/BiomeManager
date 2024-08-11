@@ -16,6 +16,7 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("com.cjcrafter:mechanicscore:3.4.1")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.13")
+    compileOnly("com.cjcrafter:foliascheduler:0.3.4")
 
     // adventure
     compileOnly("net.kyori:adventure-api:4.15.0")

@@ -4,7 +4,6 @@ import me.cjcrafter.biomemanager.BiomeManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class AutoSaveListener implements Listener {
 
@@ -24,11 +23,6 @@ public class AutoSaveListener implements Listener {
 
         // When an OP player leaves the server, this MIGHT mean that they are
         // rejoining to see their changes to the biome.
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                BiomeManager.inst().saveToConfig();
-            }
-        }.runTaskAsynchronously(BiomeManager.inst());
+        BiomeManager.inst().getScheduler().async().runNow(() -> BiomeManager.inst().saveToConfig());
     }
 }
