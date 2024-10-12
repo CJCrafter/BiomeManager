@@ -1,11 +1,11 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
 
 group = "me.cjcrafter"
-version = "3.7.3"
+version = "3.7.4"
 
 plugins {
     `java-library`
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "8.3.3"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
@@ -15,6 +15,7 @@ bukkit {
     name = "BiomeManager"
     apiVersion = "1.16"
     load = STARTUP // required to register biomes before world load
+    foliaSupported = true
 
     authors = listOf("CJCrafter")
     depend = listOf("ProtocolLib", "MechanicsCore")
@@ -55,10 +56,12 @@ tasks.shadowJar {
         include(project(":Biome_1_20_R4"))
         include(project(":Biome_1_21_R1"))
 
-        relocate("org.bstats", "me.cjcrafter.biomemanager.lib.bstats") {
+        relocate("org.bstats", "com.cjcrafter.biomemanager.lib.bstats") {
             include(dependency("org.bstats:"))
         }
     }
+
+    relocate("com.cjcrafter.foliascheduler", "me.deecaad.core.lib.scheduler")
 
     // This doesn't actually include any dependencies, this relocates all references
     // to the mechanics core lib.
