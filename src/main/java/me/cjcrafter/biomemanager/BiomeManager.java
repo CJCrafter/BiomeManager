@@ -1,7 +1,7 @@
 package me.cjcrafter.biomemanager;
 
-import com.cjcrafter.scheduler.FoliaCompatibility;
-import com.cjcrafter.scheduler.ServerImplementation;
+import com.cjcrafter.foliascheduler.FoliaCompatibility;
+import com.cjcrafter.foliascheduler.ServerImplementation;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;

@@ -4,6 +4,7 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 
     maven(url="https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
@@ -14,9 +15,9 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("com.cjcrafter:mechanicscore:3.4.1")
+    compileOnly("com.cjcrafter:foliascheduler:0.6.0")
+    compileOnly("com.cjcrafter:mechanicscore:3.4.13-FOLIA")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.13")
-    compileOnly("com.cjcrafter:foliascheduler:0.3.4")
 
     // adventure
     compileOnly("net.kyori:adventure-api:4.15.0")
